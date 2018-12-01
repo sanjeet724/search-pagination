@@ -1,0 +1,8 @@
+// Import Statement for MongoDB
+mongoimport --db movie-plot --collection movies --file  wiki_movie_plots.csv --type csv --headerline
+
+// categories in the db
+unknown, romance, comedy, drama, biographical, biography, short film, western, short fantasy, silent sports
+adventure, historical drama, documentary drama, epic, action adventure, romantic drama, mystery, fanatasy
+crime drama, historical, sexual hygiene/exploitation film, comedy drama, war drama, comedy short, spy,
+propaganda, ww1 propaganda, biopic, animated series

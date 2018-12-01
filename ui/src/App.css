@@ -1,0 +1,67 @@
+.app-header {
+    margin-top : 16px;  
+}
+
+.app-main{
+    display: flex;
+    justify-content: space-between;
+}
+
+/* .side-panel {
+    margin-top : 128px;
+    margin-left: 12px;
+    width: 128px;
+} */
+
+/* .result-container {
+    display: flex;
+    justify-content: space-between;
+} */
+
+/* .result-container .category-list {
+    margin-right: 16px;
+} */
+
+.page-navigation {
+    margin-top: 16px;
+}
+
+.form-input-control {
+    flex: 5;
+}
+
+.form-button-control {
+    flex: 1;
+}
+
+.row-cell{
+    font-size: 14px;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
+    max-width: 18px;
+}
+
+.table-header {
+    width: 15%;
+} 
+
+.table-header-index {
+    width: 10%;
+}
+
+.result-info-menu {
+    display: flex;
+    justify-content: space-between;
+}
+
+.disabled {
+    cursor: not-allowed;
+}
+
+.disabled:hover {
+    background-color: white !important;
+}
+
+
