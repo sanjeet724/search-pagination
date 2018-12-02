@@ -1,26 +1,21 @@
 import React from 'react';
-import _ from 'lodash';
+import { getPageRange } from '../utils/paginate';
 
 const PageNavigation = (props) => {
-    const { currentPage, pageSize, totalItems, limit, onPageChange } = props;
-    const { onPrevious, onNext } = props;
+    const { currentPage, pageSize, totalItems, onPageChange } = props;
+    const { onPrevious, onNext, previousPageRange } = props;
     const previousDisabled = currentPage === 1;
     const nextDisabled = currentPage === Math.ceil(totalItems / pageSize); // last page
 
-    // don't show all pages, show pages upto the limit
-    let pagesCount;
-    if (totalItems >= limit) {
-        pagesCount = Math.ceil(limit / pageSize);
-    } else {
-        pagesCount = Math.ceil(totalItems / pageSize);
-    }
+    const pagesCount = Math.ceil(totalItems / pageSize);
 
     // don't show page if there is only 1 page
     if (pagesCount === 1) {
         return null;
     }
-
-    const pages = _.range(1, pagesCount + 1)
+    // show 5 pages at a time
+    const windowSize = pagesCount > 5 ? 5 : pagesCount;
+    const pages = getPageRange(currentPage, windowSize, previousPageRange);
 
     return (
         <div className="page-navigation">
@@ -29,7 +24,7 @@ const PageNavigation = (props) => {
                     <button
                         className={previousDisabled ? "page-link disabled" : "page-link"}
                         disabled={previousDisabled}
-                        onClick={() => onPrevious(currentPage)}>
+                        onClick={() => onPrevious(currentPage, pages)}>
                         <span>&laquo;</span>
                         <span className="sr-only">Previous</span>
                     </button>
@@ -39,14 +34,14 @@ const PageNavigation = (props) => {
                                 <button
                                     type="button"
                                     className="page-link"
-                                    onClick={() => onPageChange(page)}>{page}</button>
+                                    onClick={() => onPageChange(page, pages)}>{page}</button>
                             </li>
                         ))
                     }
                     <button
                         className={nextDisabled ? "page-link disabled" : "page-link"}
                         disabled={nextDisabled}
-                        onClick={() => onNext(currentPage)}>
+                        onClick={() => onNext(currentPage, pages)}>
                         <span>&raquo;</span>
                         <span className="sr-only">Next</span>
                     </button>

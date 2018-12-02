@@ -6,7 +6,7 @@ const SearchForm = (props) => {
         <div className="input-group search-container">
             <input
                 type="text"
-                placeholder="Search over 36,000 movie titles"
+                placeholder="Search over 34,000 movie titles"
                 className="form-input-control"
                 onChange={(e) => inputChanged(e)}
             />

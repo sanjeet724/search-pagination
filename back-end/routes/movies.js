@@ -10,7 +10,7 @@ router.get('/', async (req, res) => {
     try {
         const totalCount = await Movie.find({ Title: searchTerm }).countDocuments();
         const movies = await Movie.find({ Title: searchTerm }).
-            limit(50).
+            limit(200).
             select({
                 "Title": 1,
                 "Release Year": 1,

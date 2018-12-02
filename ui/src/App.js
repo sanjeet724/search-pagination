@@ -13,8 +13,8 @@ class App extends Component {
     searchTerm: "",
     categorySelected: null,
     pageSize: 10,
-    limit: 50,
     currentPage: 1,
+    previousPageRange: [],
     searchResult: {},
     errors: null
   }
@@ -65,6 +65,7 @@ class App extends Component {
 
     // reset the current page to clear an older search
     this.setState({ currentPage: 1 });
+    this.setState({ previousPageRange: [] })
   }
 
   submitChanges = async () => {
@@ -76,24 +77,27 @@ class App extends Component {
     }
   };
 
-  handlePageChange = page => {
+  handlePageChange = (page, range) => {
+    this.setState({ previousPageRange: range })
     this.setState({ currentPage: page });
   };
 
-  handlePrevious = page => {
+  handlePrevious = (page, range) => {
     if (page !== 1) {
+      this.setState({ previousPageRange: range })
       this.setState({ currentPage: page - 1 });
     }
   };
 
-  handleNext = page => {
+  handleNext = (page, range) => {
     const { searchResult, pageSize } = this.state;
-    const lastPage = Math.ceil(searchResult / pageSize);
+    const lastPage = Math.ceil(searchResult.totalCount / pageSize);
     if (page !== lastPage) {
+      this.setState({ previousPageRange: range })
       this.setState({ currentPage: page + 1 });
     } else {
-      // fetch new data
-      this.getNewData();
+      // to-do
+      return;
     }
   };
 
@@ -108,7 +112,7 @@ class App extends Component {
 
   render() {
     const { errors, searchResult } = this.state;
-    const { pageSize, currentPage, limit } = this.state;
+    const { pageSize, currentPage, previousPageRange } = this.state;
 
     // paginate movies
     const movies = paginate(searchResult.movies, currentPage, pageSize);
@@ -130,9 +134,9 @@ class App extends Component {
               <ResultTable movies={movies} currentPage={currentPage} pageSize={pageSize} />
               <PageNavigation
                 currentPage={currentPage}
+                previousPageRange={previousPageRange}
                 pageSize={pageSize}
                 totalItems={searchResult.totalCount}
-                limit={limit}
                 onPageChange={this.handlePageChange}
                 onPrevious={this.handlePrevious}
                 onNext={this.handleNext} />
