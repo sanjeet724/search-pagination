@@ -6,3 +6,13 @@ unknown, romance, comedy, drama, biographical, biography, short film, western, s
 adventure, historical drama, documentary drama, epic, action adventure, romantic drama, mystery, fanatasy
 crime drama, historical, sexual hygiene/exploitation film, comedy drama, war drama, comedy short, spy,
 propaganda, ww1 propaganda, biopic, animated series
+
+// when searching in UI for title
+you - 492 records
+the - 8k records
+dogs - 24 records
+dog - 101 records
+love - 557 records
+their - 11 records
+rain -129 records
+girl - 340 records

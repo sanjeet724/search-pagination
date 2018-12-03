@@ -6,6 +6,7 @@ import PageNavigation from './components/pageNavigation';
 import { paginate } from './utils/paginate';
 import * as movieService from './services/movieService';
 import Joi from 'joi-browser';
+import MDSpinner from 'react-md-spinner'
 import './App.css';
 
 class App extends Component {
@@ -13,9 +14,11 @@ class App extends Component {
     searchTerm: "",
     categorySelected: null,
     pageSize: 10,
+    limit: 500,
     currentPage: 1,
     previousPageRange: [],
     searchResult: {},
+    fetchingData: false,
     errors: null
   }
 
@@ -62,6 +65,7 @@ class App extends Component {
     searchResult.movies = movies;
     searchResult.totalCount = totalCount;
     this.setState({ searchResult });
+    this.setState({ fetchingData: false });
 
     // reset the current page to clear an older search
     this.setState({ currentPage: 1 });
@@ -70,6 +74,7 @@ class App extends Component {
 
   submitChanges = async () => {
     try {
+      this.setState({ fetchingData: true });
       const movies = await movieService.getMovieByTitle(this.state.searchTerm);
       this.updateResults(movies.data);
     } catch (err) {
@@ -90,32 +95,35 @@ class App extends Component {
   };
 
   handleNext = (page, range) => {
-    const { searchResult, pageSize } = this.state;
+    const { searchResult, pageSize, limit } = this.state;
     const lastPage = Math.ceil(searchResult.totalCount / pageSize);
+    const pageLimit = limit / pageSize;
+
     if (page !== lastPage) {
-      this.setState({ previousPageRange: range })
-      this.setState({ currentPage: page + 1 });
-    } else {
-      // to-do
-      return;
+      if (page >= pageLimit) {
+        this.setState({ fetchingData: true });
+      } else {
+        this.setState({ previousPageRange: range })
+        this.setState({ currentPage: page + 1 });
+      }
     }
   };
 
-  getNewData = async () => {
-    try {
-      const movies = await movieService.getMovieByTitle(this.state.searchTerm);
-      this.updateResults(movies.data);
-    } catch (err) {
-      console.error(err.message);
-    }
+  handleFirst = firstPage => {
+    this.setState({ currentPage: firstPage });
+  };
+
+  handleLast = (lastPage) => {
+    this.setState({ currentPage: lastPage });
   };
 
   render() {
-    const { errors, searchResult } = this.state;
+    const { errors, searchResult, limit, fetchingData } = this.state;
     const { pageSize, currentPage, previousPageRange } = this.state;
 
     // paginate movies
     const movies = paginate(searchResult.movies, currentPage, pageSize);
+    const recordsShown = searchResult.totalCount > limit ? limit : searchResult.totalCount;
 
     return (
       <div className="app-main">
@@ -127,18 +135,25 @@ class App extends Component {
             errors={errors} />
           {searchResult.totalCount &&
             <React.Fragment>
+              {fetchingData && <MDSpinner />}
               <div className="result-info-menu">
                 <h4><span className="badge badge-success">{searchResult.totalCount}</span> Movies found</h4>
                 <CategoryDropDown />
               </div>
+              <div className="records-shown">
+                <h5>Showing <span className="badge badge-info">{recordsShown} / {searchResult.totalCount}</span> records</h5>
+              </div>
               <ResultTable movies={movies} currentPage={currentPage} pageSize={pageSize} />
               <PageNavigation
+                limit={limit}
                 currentPage={currentPage}
                 previousPageRange={previousPageRange}
                 pageSize={pageSize}
                 totalItems={searchResult.totalCount}
                 onPageChange={this.handlePageChange}
                 onPrevious={this.handlePrevious}
+                onFirstPage={this.handleFirst}
+                onLastPage={this.handleLast}
                 onNext={this.handleNext} />
             </React.Fragment>
           }

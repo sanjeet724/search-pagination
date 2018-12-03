@@ -1,13 +1,20 @@
 import React from 'react';
+import LimitButton from './limitButton';
+import PageNavIcon from './pageNavIcon';
+import PageNavItem from './pageNavItem';
 import { getPageRange } from '../utils/paginate';
 
 const PageNavigation = (props) => {
     const { currentPage, pageSize, totalItems, onPageChange } = props;
-    const { onPrevious, onNext, previousPageRange } = props;
+    const { onPrevious, onNext, previousPageRange, limit } = props;
+    const { onFirstPage, onLastPage } = props;
     const previousDisabled = currentPage === 1;
     const nextDisabled = currentPage === Math.ceil(totalItems / pageSize); // last page
 
-    const pagesCount = Math.ceil(totalItems / pageSize);
+    const totalPages = Math.ceil(totalItems / pageSize);
+    const pagesLimit = Math.ceil(limit / pageSize);
+    const pagesCount = totalPages > pagesLimit ? pagesLimit : totalPages;
+    const lastDisabled = currentPage === pagesCount;
 
     // don't show page if there is only 1 page
     if (pagesCount === 1) {
@@ -21,32 +28,41 @@ const PageNavigation = (props) => {
         <div className="page-navigation">
             <nav>
                 <ul className="pagination justify-content-center">
-                    <button
-                        className={previousDisabled ? "page-link disabled" : "page-link"}
-                        disabled={previousDisabled}
-                        onClick={() => onPrevious(currentPage, pages)}>
-                        <span>&laquo;</span>
-                        <span className="sr-only">Previous</span>
-                    </button>
+                    <LimitButton
+                        clickHandler={onFirstPage}
+                        label={"First"}
+                        isDisabled={previousDisabled}
+                        targetPage={1} />
+                    <PageNavIcon
+                        clickHandler={onPrevious}
+                        currentPage={currentPage}
+                        isDisabled={previousDisabled}
+                        pageRange={pages}
+                        type={"previous"}
+                        label={"Previous"} />
+
                     {
                         pages.map(page => (
-                            <li key={page} className={page === currentPage ? "page-item active" : "page-item"}>
-                                <button
-                                    type="button"
-                                    className="page-link"
-                                    onClick={() => onPageChange(page, pages)}>{page}</button>
-                            </li>
+                            <PageNavItem key={page}
+                                toPage={page}
+                                currentPage={currentPage}
+                                clickHandler={onPageChange}
+                                pageRange={pages} />
                         ))
                     }
-                    <button
-                        className={nextDisabled ? "page-link disabled" : "page-link"}
-                        disabled={nextDisabled}
-                        onClick={() => onNext(currentPage, pages)}>
-                        <span>&raquo;</span>
-                        <span className="sr-only">Next</span>
-                    </button>
+                    <PageNavIcon
+                        clickHandler={onNext}
+                        currentPage={currentPage}
+                        isDisabled={nextDisabled}
+                        pageRange={pages}
+                        type={"next"}
+                        label={"Next"} />
+                    <LimitButton
+                        clickHandler={onLastPage}
+                        label={"Last"}
+                        isDisabled={lastDisabled}
+                        targetPage={pagesCount} />
                 </ul>
-
             </nav>
         </div>
     )

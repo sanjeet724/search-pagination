@@ -64,4 +64,9 @@
     background-color: white !important;
 }
 
+.records-shown{
+    display: flex;
+    justify-content: space-between;
+}
+
 
