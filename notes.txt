@@ -16,3 +16,9 @@ love - 557 records
 their - 11 records
 rain -129 records
 girl - 340 records
+
+// to-do
+1. Filter by Genre
+2. Filter by Origin
+3. Sort by Year
+4. Show plot/wiki link in a new page ?
