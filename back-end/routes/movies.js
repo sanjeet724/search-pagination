@@ -4,14 +4,15 @@ const router = express.Router();
 const { Movie } = require('../models/movie');
 
 router.get('/', async (req, res) => {
-    const { title } = req.query;
+    const { title, skip } = req.query;
     const searchTerm = new RegExp(title, "i");
-
+    const skipNum = skip ? parseInt(skip) : 0;
     try {
         const totalCount = await Movie.find({ Title: searchTerm }).countDocuments();
-        const movies = await Movie.find({ Title: searchTerm }).
-            limit(500).
-            select({
+        const movies = await Movie.find({ Title: searchTerm })
+            .skip(skipNum)
+            .limit(500)
+            .select({
                 "Title": 1,
                 "Release Year": 1,
                 "Origin/Ethnicity": 1,

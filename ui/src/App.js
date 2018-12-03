@@ -101,11 +101,38 @@ class App extends Component {
 
     if (page !== lastPage) {
       if (page >= pageLimit) {
-        this.setState({ fetchingData: true });
+        this.getNewData(page, range);
       } else {
         this.setState({ previousPageRange: range })
         this.setState({ currentPage: page + 1 });
       }
+    }
+  };
+
+  updateNewResults = (results, page, range) => {
+    const { searchResult, limit: oldLimit } = this.state;
+    const { movies } = searchResult;
+    const newData = movies.concat(results.movies);
+    searchResult.movies = newData;
+    this.setState({ searchResult });
+    // update the page
+    this.setState({ previousPageRange: range })
+    this.setState({ currentPage: page + 1 });
+    // set the new limit
+    this.setState({ limit: oldLimit + 500 });
+    // stop the spinner
+    this.setState({ fetchingData: false });
+  };
+
+  getNewData = async (page, range) => {
+    try {
+      this.setState({ fetchingData: true });
+      const { limit } = this.state;
+      const skip = limit;
+      const movies = await movieService.getMovieByTitle(this.state.searchTerm, skip);
+      this.updateNewResults(movies.data, page, range);
+    } catch (err) {
+      console.error(err.message);
     }
   };
 
